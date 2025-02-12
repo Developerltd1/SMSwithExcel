@@ -15,6 +15,8 @@ using System.Windows.Forms;
 using NPOI.HSSF.UserModel;
 using WifiPocketProject.CommonCode;
 using Domain.Contacts;
+using BusinessLogic.Services;
+using Domain.Exceptions;
 
 
 
@@ -67,19 +69,40 @@ namespace WifiPocketProject.UI
 
         private async void btnImportExcel_Click(object sender, EventArgs e)
         {
-            await ProcessExcelAsync(_FileName);
+            try
+            {
+                if (!string.IsNullOrEmpty(_FileName))
+                {
+                    if (gdvExcel.Rows.Count > 0)
+                        await ProcessExcelAsync(_FileName);
+                    else
+                        MessageBox.Show("Grid is not Load");
+                }
+                else
+                {
+                    MessageBox.Show("Please Select File");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         private void comboBoxSheets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadExcelToDataGridView(_FileName);
+
         }
-        
+
         #region Methods
         private async Task ProcessExcelAsync(string filePath)
         {
+            ContactCreateMdl.Request requestMdl = new ContactCreateMdl.Request();
+
             //ISheet sheet = workbook.GetSheetAt(0); // Get the first sheet
             string _combo = comboBoxSheets.SelectedItem.ToString();
             ISheet sheet = workbook.GetSheet(_combo); // Replace with your sheet name
+            requestMdl.SheetName = _combo;
             if (sheet == null)
                 throw new Exception("Sheet not found.");
 
@@ -118,17 +141,33 @@ namespace WifiPocketProject.UI
             IRow currentRow = null;
             string MobileNumber0 = null;
             ICell statusCell = null;
+            ICell duplicateCell = null;
             ICell mobileCell = null;
-            string RowNo = null;
-            string SNo = null;
+            //string RowNo = null;
+            //string SNo = null;
             string MobileNumber = null;
-            string Name = null;
-            string Details = null;
-            string Refrence = null;
-            ContactCreateMdl.Request requestMdl = new ContactCreateMdl.Request();
+            //string Name = null;
+            //string Details = null;
+            //string Refrence = null;
+
+
+            #region ProgressBar
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = validMobileNumberCount;
+            progressBar1.Value = 0;
+            progressBar1.Step = 1;
+            progressBar1.Style = ProgressBarStyle.Continuous;
+            #endregion
 
             for (int row = 1; row <= validMobileNumberCount; row++) // Skip header
             {
+                
+                progressBar1.Invoke(new Action(() =>
+                {
+                    progressBar1.PerformStep();
+                    progressBar1.Refresh();
+                }));
+
                 currentRow = sheet.GetRow(row);
                 if (currentRow == null) continue;
 
@@ -147,44 +186,39 @@ namespace WifiPocketProject.UI
                 //////    continue;
                 //////} 
                 #endregion
+                requestMdl.ChechStatus = currentRow.GetCell(6)?.ToString(); //After Status Col
+               
+                if (!string.IsNullOrEmpty(requestMdl.ChechStatus))
+                {
+                    if (requestMdl.ChechStatus.Contains("uplicate"))
+                    {
+                        continue;
+                    }
+                }
 
+                duplicateCell = currentRow.CreateCell(6); // Assuming column 3 is for status
                 statusCell = currentRow.CreateCell(5); // Assuming column 3 is for status
-                statusCell.SetCellValue("Pending");
-                statusCell.CellStyle = orangeStyle; // Set as Pending (Orange)
-                dt.Rows[row - 1][5] = "Pending"; // Update GridView
-                requestMdl.Status = "Pending"; // Update DbTable: tblContacts
+
                 try
                 {
-                    RowNo = row.ToString();
-                    requestMdl.LoopRowNo = row; // Update DbTable: tblContacts
-                    SNo = currentRow.GetCell(0)?.ToString(); //S#
-                    requestMdl.SheetSNo = Convert.ToInt32(SNo); // Update DbTable: tblContacts
+                    requestMdl.LoopRowNo = row.ToString();
+                    requestMdl.SheetSNo = currentRow.GetCell(0)?.ToString(); //S#
                     MobileNumber = currentRow.GetCell(1)?.ToString()?.Trim(); //Mobile Number
-
-                    Name = currentRow.GetCell(2)?.ToString(); //Name
-                    requestMdl.Name = Name; // Update DbTable: tblContacts
-                    Details = currentRow.GetCell(3)?.ToString(); //Details
-                    requestMdl.Description = Details; // Update DbTable: tblContacts
-                    Refrence = currentRow.GetCell(4)?.ToString(); //Refrence
-                    requestMdl.RefrenceName = Refrence; // Update DbTable: tblContacts
+                    requestMdl.Name = currentRow.GetCell(2)?.ToString(); //Name
+                    requestMdl.Description = currentRow.GetCell(3)?.ToString(); //Details
+                    requestMdl.RefrenceName = currentRow.GetCell(4)?.ToString(); //Refrence
 
                     if (!string.IsNullOrWhiteSpace(MobileNumber) && MobileNumber.Count(char.IsDigit) >= 10)
                     {
-                        MobileNumber = FilterNumber.FormatPhoneNumber(MobileNumber);
-                        requestMdl.RefrenceName = MobileNumber; // Update DbTable: tblContacts  --FilterNumber
+                        requestMdl.MobileNumber = FilterNumber.FormatPhoneNumber(MobileNumber);
                         statusCell.CellStyle = greenStyle; // Set as Read (Green)
-                        //////mobileCell = currentRow.CreateCell(1); // Assuming column 3 is for status
-                        //////mobileCell.SetCellValue(MobileNumber);
                         statusCell.SetCellValue("Saved");
-                        //////dt.Rows[row - 1][1] = MobileNumber; // Update GridView
                         dt.Rows[row - 1][5] = "Saved"; // Update GridView
                         requestMdl.Status = "Saved"; // Update DbTable: tblContacts
 
-                        #region DbInsert
-                      // var response = new ContactServices().CreateAsync(requestMdl);
-                      // progressBar1 //here...
-                        #endregion
-
+                        //////mobileCell = currentRow.CreateCell(1); // Assuming column 3 is for status
+                        //////mobileCell.SetCellValue(MobileNumber);
+                        //////dt.Rows[row - 1][1] = MobileNumber; // Update GridView
                     }
                     else
                     {
@@ -193,16 +227,35 @@ namespace WifiPocketProject.UI
                         dt.Rows[row - 1][5] = "Invalid"; // Update GridView
                         requestMdl.Status = "Invalid"; // Update DbTable: tblContacts
                     }
+                    #region DbInsert
+                    int IsMobileNumberExists = 0;
+                    var response = new ContactServices().CreateAsync(requestMdl, out IsMobileNumberExists);
+                    if (IsMobileNumberExists > 0)
+                    {
+                        duplicateCell.CellStyle = orangeStyle; // Set as Failed (Red)
+                        duplicateCell.SetCellValue("Duplicate: " + IsMobileNumberExists);
+
+                    }
+                    #endregion
                 }
-                catch
+                catch (Exception ex)
                 {
                     statusCell.SetCellValue("Failed");
                     statusCell.CellStyle = redStyle; // Set as Failed (Red)
                     dt.Rows[row - 1][5] = "Failed"; // Update GridView
                     requestMdl.Status = "Failed"; // Update DbTable: tblContacts
+                    #region DbInsert
+                    ExceptionMdl.Request requestException = new ExceptionMdl.Request();
+                    requestException.ErrorMessage = ex.Message;
+                    requestException.ErrorInnerMessage = ex.InnerException.ToString();
+                    requestException.FuncationName = "ProcessExcelAsync";
+                    requestException.SheetSNo = row.ToString();
+                    requestException.SheetName = _combo;  //SheetName
+                    var response = new ContactServices().ExceptionAsync(requestException);
+                    #endregion
                 }
 
-                
+
 
                 // ✅ Batch update the DataGridView after processing all rows
                 gdvExcel.Invoke(new Action(() =>
@@ -213,20 +266,37 @@ namespace WifiPocketProject.UI
 
 
             }
-            
-            
-            gdvExcel.Invoke(new Action(() =>
-            {
-                gdvExcel.Refresh();
-            }));
+
+
+
+
             // ✅ Ensure workbook is fully loaded before writing
-            using (FileStream outFile = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream outFile = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 workbook.Write(outFile);
             }
             workbook.Close(); // Close the workbook properly
-            MessageBox.Show("Processing Complete! Open the file to see the status colors.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            workbook = null; // Ensure it's disposed
+
+            progressBar1.Invoke(new Action(() =>
+            {
+                progressBar1.Value = validMobileNumberCount;
+            }));
+            gdvExcel.Invoke(new Action(() =>
+            {
+                MessageBox.Show("Processing Complete!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //gdvExcel.DataSource = null;
+                //gdvExcel.Rows.Clear();
+                gdvExcel.Refresh();
+                comboBoxSheets.Text = null;
+                _FileName = null;
+            }));
         }
+
+
+
+
+
         // ✅ Separate function to count and return rows where "Mobile Number" has data
         private List<int> GetValidMobileNumberRows(ISheet sheet)
         {
@@ -257,6 +327,7 @@ namespace WifiPocketProject.UI
         }
         private async Task LoadExcelToDataGridView(string filePath)
         {
+
             try
             {
                 await Task.Run(() =>
@@ -270,7 +341,10 @@ namespace WifiPocketProject.UI
                         {
                             _combo = comboBoxSheets.SelectedItem?.ToString() ?? "";
                         }));
-
+                        if (string.IsNullOrEmpty(_combo))
+                        {
+                            return;
+                        }
                         ISheet sheet = workbook.GetSheet(_combo); // Replace with your sheet name
                         List<int> validRows = GetValidMobileNumberRows(sheet);
                         DataTable dt = new DataTable();
@@ -326,6 +400,29 @@ namespace WifiPocketProject.UI
         private void btnReset_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnLoadExcel_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void comboBoxSheets_SelectedValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(_FileName))
+                    LoadExcelToDataGridView(_FileName);
+
+                else
+                    MessageBox.Show("Please Select File");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

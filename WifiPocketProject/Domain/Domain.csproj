@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Contacts\ContactCreateMdl.cs" />
     <Compile Include="Enums\CommandTypeEnum.cs" />
+    <Compile Include="Exceptions\ExceptionMdl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

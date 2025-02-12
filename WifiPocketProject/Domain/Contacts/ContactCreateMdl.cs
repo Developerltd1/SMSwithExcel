@@ -9,6 +9,7 @@ namespace Domain.Contacts
 {
     public class ContactCreateMdl
     {
+        #region Create
         public class Request
         {
             public int ContactID { get; set; }  // Not nullable (unchecked in DB)
@@ -34,15 +35,18 @@ namespace Domain.Contacts
 
             [StringLength(99, ErrorMessage = "Sheet name cannot exceed 99 characters.")]
             public string SheetName { get; set; }
-            public int SheetSNo { get; set; }
-            public int LoopRowNo { get; set; }
+            public string SheetSNo { get; set; }
+            public string LoopRowNo { get; set; }
 
-            
+
+            public string ChechStatus { get; set; }
 
         }
         public class Response
         {
 
         }
+        #endregion
+
     }
 }

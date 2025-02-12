@@ -38,6 +38,7 @@ namespace WifiPocketProject.UI
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnLoadExcel = new FontAwesome.Sharp.IconButton();
             this.btnReset = new FontAwesome.Sharp.IconButton();
             this.btnImportExcel = new FontAwesome.Sharp.IconButton();
             this.btnLoadExcelFile = new FontAwesome.Sharp.IconButton();
@@ -66,6 +67,7 @@ namespace WifiPocketProject.UI
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(37)))), ((int)(((byte)(60)))));
+            this.panel3.Controls.Add(this.btnLoadExcel);
             this.panel3.Controls.Add(this.btnReset);
             this.panel3.Controls.Add(this.btnImportExcel);
             this.panel3.Controls.Add(this.btnLoadExcelFile);
@@ -76,6 +78,27 @@ namespace WifiPocketProject.UI
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1133, 106);
             this.panel3.TabIndex = 48;
+            // 
+            // btnLoadExcel
+            // 
+            this.btnLoadExcel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnLoadExcel.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.btnLoadExcel.FlatAppearance.BorderSize = 0;
+            this.btnLoadExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLoadExcel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLoadExcel.ForeColor = System.Drawing.Color.White;
+            this.btnLoadExcel.IconChar = FontAwesome.Sharp.IconChar.None;
+            this.btnLoadExcel.IconColor = System.Drawing.Color.White;
+            this.btnLoadExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.btnLoadExcel.IconSize = 32;
+            this.btnLoadExcel.Location = new System.Drawing.Point(582, 33);
+            this.btnLoadExcel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnLoadExcel.Name = "btnLoadExcel";
+            this.btnLoadExcel.Size = new System.Drawing.Size(143, 46);
+            this.btnLoadExcel.TabIndex = 55;
+            this.btnLoadExcel.Text = "Load Excel";
+            this.btnLoadExcel.UseVisualStyleBackColor = false;
+            this.btnLoadExcel.Click += new System.EventHandler(this.btnLoadExcel_Click);
             // 
             // btnReset
             // 
@@ -89,7 +112,7 @@ namespace WifiPocketProject.UI
             this.btnReset.IconColor = System.Drawing.Color.White;
             this.btnReset.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnReset.IconSize = 32;
-            this.btnReset.Location = new System.Drawing.Point(731, 33);
+            this.btnReset.Location = new System.Drawing.Point(880, 33);
             this.btnReset.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(143, 46);
@@ -110,12 +133,12 @@ namespace WifiPocketProject.UI
             this.btnImportExcel.IconColor = System.Drawing.Color.White;
             this.btnImportExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnImportExcel.IconSize = 32;
-            this.btnImportExcel.Location = new System.Drawing.Point(582, 33);
+            this.btnImportExcel.Location = new System.Drawing.Point(731, 33);
             this.btnImportExcel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnImportExcel.Name = "btnImportExcel";
             this.btnImportExcel.Size = new System.Drawing.Size(143, 46);
             this.btnImportExcel.TabIndex = 50;
-            this.btnImportExcel.Text = "Import Excel";
+            this.btnImportExcel.Text = "Import to DB";
             this.btnImportExcel.UseVisualStyleBackColor = false;
             this.btnImportExcel.Click += new System.EventHandler(this.btnImportExcel_Click);
             // 
@@ -131,12 +154,12 @@ namespace WifiPocketProject.UI
             this.btnLoadExcelFile.IconColor = System.Drawing.Color.White;
             this.btnLoadExcelFile.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnLoadExcelFile.IconSize = 32;
-            this.btnLoadExcelFile.Location = new System.Drawing.Point(433, 33);
+            this.btnLoadExcelFile.Location = new System.Drawing.Point(30, 36);
             this.btnLoadExcelFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnLoadExcelFile.Name = "btnLoadExcelFile";
             this.btnLoadExcelFile.Size = new System.Drawing.Size(143, 46);
             this.btnLoadExcelFile.TabIndex = 53;
-            this.btnLoadExcelFile.Text = "Load Excel File";
+            this.btnLoadExcelFile.Text = "Upload Excel File";
             this.btnLoadExcelFile.UseVisualStyleBackColor = false;
             this.btnLoadExcelFile.Click += new System.EventHandler(this.btnLoadExcelFile_Click);
             // 
@@ -146,7 +169,7 @@ namespace WifiPocketProject.UI
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label13.Location = new System.Drawing.Point(26, 50);
+            this.label13.Location = new System.Drawing.Point(183, 50);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(38, 20);
             this.label13.TabIndex = 52;
@@ -156,11 +179,12 @@ namespace WifiPocketProject.UI
             // 
             this.comboBoxSheets.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.comboBoxSheets.FormattingEnabled = true;
-            this.comboBoxSheets.Location = new System.Drawing.Point(84, 49);
+            this.comboBoxSheets.Location = new System.Drawing.Point(241, 49);
             this.comboBoxSheets.Name = "comboBoxSheets";
             this.comboBoxSheets.Size = new System.Drawing.Size(326, 21);
             this.comboBoxSheets.TabIndex = 51;
             this.comboBoxSheets.SelectedIndexChanged += new System.EventHandler(this.comboBoxSheets_SelectedIndexChanged);
+            this.comboBoxSheets.SelectedValueChanged += new System.EventHandler(this.comboBoxSheets_SelectedValueChanged);
             // 
             // panel5
             // 
@@ -304,7 +328,6 @@ namespace WifiPocketProject.UI
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
-           // this.Name = "ExportData";
             this.Text = "ExportData";
             this.Load += new System.EventHandler(this.ExportData_Load);
             this.panel3.ResumeLayout(false);
@@ -335,5 +358,6 @@ namespace WifiPocketProject.UI
         private FontAwesome.Sharp.IconButton btnReset;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private FontAwesome.Sharp.IconButton btnLoadExcel;
     }
 }

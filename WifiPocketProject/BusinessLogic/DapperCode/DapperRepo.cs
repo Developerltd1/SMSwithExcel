@@ -32,19 +32,27 @@ namespace BusinessLogic.DapperCode
             }
         }
 
-        public async Task<T> ExecuteScalarStoredProcedureAsync<T>(string storedProcedureName, object parameters = null)
+        public T ExecuteScalar<T>(string command, object parameters = null, CommandTypeEnum commandTypeEnum = CommandTypeEnum.Text)
         {
             using (var connection = new SqlConnection(connectionString))
             {
-                await connection.OpenAsync();
+                connection.Open(); // ✅ Corrected: Synchronous open
 
-                return await connection.ExecuteScalarAsync<T>(
-                    storedProcedureName,
+                if (parameters == null) // ✅ Ensure parameters are not null
+                {
+                    throw new ArgumentNullException(nameof(parameters), "Parameters object cannot be null.");
+                }
+
+                return connection.ExecuteScalar<T>(
+                    command,
                     parameters,
-                    commandType: CommandType.StoredProcedure
+                    commandType: commandTypeEnum == CommandTypeEnum.StoredProcedure
+                        ? CommandType.StoredProcedure
+                        : CommandType.Text
                 );
             }
         }
+
 
 
 
@@ -77,7 +85,7 @@ namespace BusinessLogic.DapperCode
                 );
             }
         }
-       
+
         public async Task<T> InsertAsync<T>(string command, object parameters, CommandTypeEnum commandTypeEnum)
         {
             try
@@ -102,6 +110,32 @@ namespace BusinessLogic.DapperCode
                 throw new Exception("Error while executing insert command", ex);
             }
         }
+
+        public T Insert<T>(string command, object parameters, CommandTypeEnum commandTypeEnum)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open(); // ✅ Open the connection synchronously
+
+                    var result = connection.ExecuteScalar<T>(
+                        command,
+                        parameters,
+                        commandType: commandTypeEnum == CommandTypeEnum.StoredProcedure
+                            ? CommandType.StoredProcedure
+                            : CommandType.Text
+                    );
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while executing insert command", ex);
+            }
+        }
+
 
 
         //public async Task<PagedResult<T>> GetPagedAsync<T>(string storedProcedure, object parameters)

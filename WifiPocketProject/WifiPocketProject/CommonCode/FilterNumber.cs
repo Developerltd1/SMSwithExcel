@@ -21,17 +21,23 @@ namespace WifiPocketProject.CommonCode
             {
                 return cleanedNumber; // Already correct
             }
+            else if (cleanedNumber.StartsWith("92") && cleanedNumber.Length == 12)
+            {
+                return "+" + cleanedNumber; // Convert 92XXXXXXXXXX → +92XXXXXXXXXX
+            }
             else if (cleanedNumber.StartsWith("03") && cleanedNumber.Length == 11)
             {
                 return "+92" + cleanedNumber.Substring(1); // Convert 03XXXXXXXXX → +923XXXXXXXXX
             }
-            else if (cleanedNumber.StartsWith("3") && cleanedNumber.Length == 9)
+            else if (cleanedNumber.StartsWith("3") && cleanedNumber.Length == 10)
             {
-                return "+92" + cleanedNumber; // Convert 3XXXXXXXX → +923XXXXXXXXX
+                return "+92" + cleanedNumber; // Convert 3XXXXXXXXX → +923XXXXXXXXX
             }
 
             return string.Empty; // Invalid format
         }
+
+
     }
 
 }
