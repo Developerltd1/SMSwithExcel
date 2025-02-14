@@ -12,15 +12,19 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using static BusinessLogic.Model.StaticModel;
 using WifiPocketProject.CommonCode;
+using Domain.MsgTemplete;
+using BusinessLogic.Services;
+using NPOI.OpenXmlFormats.Dml.Diagram;
+using System.Windows.Documents;
 
-namespace WifiPocketProject.UI
+namespace WifiPocketProject.UI.Form2
 {
-    public partial class SandBox : Form//BasetForm
+    public partial class MsgTemplete : Form//BasetForm
     {
 
         private Timer pollingTimer;
         private bool isPollingEnabled = false;
-        public SandBox()
+        public MsgTemplete()
         {
             InitializeComponent();
             MainParamatersForm_Load(null,null);
@@ -66,10 +70,10 @@ namespace WifiPocketProject.UI
         private DataTable SetupDataGridView()
         {
             DataTable dt = new StaticData().DataGridView();
-            dgvCellLevel.Rows.Clear();
+            gdvMsgTemplete.Rows.Clear();
             foreach (DataRow r in dt.Rows)
             {
-                dgvCellLevel.Rows.Add(
+                gdvMsgTemplete.Rows.Add(
                     r["Parameter"].ToString(), r["Battery-1"].ToString(), r["Battery-2"].ToString(), r["Battery-3"].ToString(), r["Battery-4"].ToString(), r["Battery-5"].ToString());
             }
             return dt;
@@ -79,7 +83,6 @@ namespace WifiPocketProject.UI
     
         private void MainParamatersForm_Load(object sender, EventArgs e)
         {
-            new PortCode().LoadSerialPortsIntoComboBox(comPorts, null);
         }
 
         private void btnSendSMS_Click(object sender, EventArgs e)
@@ -169,7 +172,7 @@ namespace WifiPocketProject.UI
             }
 
             // Step 3: Validate and format the phone number
-            string phoneNumber = FilterNumber.FormatPhoneNumber(tbContactNo.Text.Trim());
+            string phoneNumber = null;// FilterNumber.FormatPhoneNumber(tbContactNo.Text.Trim());
             if (string.IsNullOrEmpty(phoneNumber))
             {
                 MessageBox.Show("Invalid phone number format. Please enter a valid Pakistani number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -207,9 +210,52 @@ namespace WifiPocketProject.UI
 
         }
 
-        private void btnSendSMS_Click_1(object sender, EventArgs e)
-        {
+       
 
+        private void btnSaveMsg_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MsgTempleteMdl.Request request = new MsgTempleteMdl.Request();
+                request.Description = tbDescription.Text;
+                request.MessageText = tbMessage.Text;
+                request.Status = true;
+                var response = new MsgTempeletSetvice().CreateAsync(request);
+                if(response == true)
+                {
+                    MessageBox.Show("Record Saved!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var _list = new MsgTempeletSetvice().GetListAsync();
+                    DataTable dt = _list.ToDataTable();
+                    gdvMsgTemplete.Rows.Clear();
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        gdvMsgTemplete.Rows.Add(
+                            r["MessageId"].ToString(), r["MessageText"].ToString(), r["CreatedAt"].ToString(), r["Status"].ToString(), r["Description"].ToString(), r["Refrence"].ToString(), r["MsgType"].ToString());
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Record Not Saved!", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Record Not Saved: "+ ex.Message.ToString(), "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 

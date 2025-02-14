@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WifiPocketProject.UI.Form2;
 
 namespace WifiPocketProject
 {
@@ -17,10 +18,13 @@ namespace WifiPocketProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new DashBoard1());
-            Application.Run(new MainForm());
+            
+                    Application.Run(new MsgTemplete());
+            // Application.Run(new AboutUsForm());
+          //  Application.Run(new ExportData());
+            //Application.Run(new MainForm());
             //Application.Run(new SettingsForm());
-           //Application.Run(new SandBox());
+            //Application.Run(new SandBox());
 
         }
     }

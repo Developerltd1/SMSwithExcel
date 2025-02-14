@@ -119,6 +119,8 @@
     <Compile Include="Model\StaticModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ContactServices.cs" />
+    <Compile Include="Services\DataTableHelper.cs" />
+    <Compile Include="Services\MsgTempeletSetvice.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>

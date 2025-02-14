@@ -34,6 +34,7 @@ namespace WifiPocketProject.UI
             this.comPorts = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnSendSMS = new System.Windows.Forms.Button();
             this.tbMessage = new System.Windows.Forms.RichTextBox();
             this.tbContactNo = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -51,7 +52,6 @@ namespace WifiPocketProject.UI
             this.Battery3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Battery4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Battery5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnSendSMS = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -115,6 +115,16 @@ namespace WifiPocketProject.UI
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1057, 173);
             this.panel2.TabIndex = 69;
+            // 
+            // btnSendSMS
+            // 
+            this.btnSendSMS.Location = new System.Drawing.Point(883, 95);
+            this.btnSendSMS.Name = "btnSendSMS";
+            this.btnSendSMS.Size = new System.Drawing.Size(171, 63);
+            this.btnSendSMS.TabIndex = 70;
+            this.btnSendSMS.Text = "Send SMS";
+            this.btnSendSMS.UseVisualStyleBackColor = true;
+            this.btnSendSMS.Click += new System.EventHandler(this.btnSendSMS_Click_1);
             // 
             // tbMessage
             // 
@@ -298,16 +308,7 @@ namespace WifiPocketProject.UI
             this.Battery5.ReadOnly = true;
             this.Battery5.Width = 125;
             // 
-            // btnSendSMS
-            // 
-            this.btnSendSMS.Location = new System.Drawing.Point(883, 95);
-            this.btnSendSMS.Name = "btnSendSMS";
-            this.btnSendSMS.Size = new System.Drawing.Size(171, 63);
-            this.btnSendSMS.TabIndex = 70;
-            this.btnSendSMS.Text = "Send SMS";
-            this.btnSendSMS.UseVisualStyleBackColor = true;
-            // 
-            // SandBox
+            // MessageTemplete
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -317,7 +318,7 @@ namespace WifiPocketProject.UI
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "SandBox";
+            this.Name = "MessageTemplete";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SandBox";
             this.Load += new System.EventHandler(this.MainParamatersForm_Load);

@@ -101,8 +101,14 @@ namespace WifiPocketProject.UI
 
             //ISheet sheet = workbook.GetSheetAt(0); // Get the first sheet
             string _combo = comboBoxSheets.SelectedItem.ToString();
-            ISheet sheet = workbook.GetSheet(_combo); // Replace with your sheet name
+           // ISheet sheet = workbook.GetSheet(_combo); // Replace with your sheet name
+            XSSFSheet sheet = workbook.GetSheet(_combo) as XSSFSheet;
             requestMdl.SheetName = _combo;
+
+           
+
+
+
             if (sheet == null)
                 throw new Exception("Sheet not found.");
 
@@ -133,7 +139,6 @@ namespace WifiPocketProject.UI
             }
 
             #endregion
-
             // 🔹 Get only valid rows where MobileNumber is filled
             List<int> validRows = GetValidMobileNumberRows(sheet);
             int validMobileNumberCount = validRows.Count; // Total valid numbers found
@@ -143,13 +148,7 @@ namespace WifiPocketProject.UI
             ICell statusCell = null;
             ICell duplicateCell = null;
             ICell mobileCell = null;
-            //string RowNo = null;
-            //string SNo = null;
             string MobileNumber = null;
-            //string Name = null;
-            //string Details = null;
-            //string Refrence = null;
-
 
             #region ProgressBar
             progressBar1.Minimum = 0;
@@ -269,6 +268,10 @@ namespace WifiPocketProject.UI
 
 
 
+            ////// sheet.TabColorIndex = IndexedColors.LightGreen.Index; // Green
+            ////// Set the sheet tab color (RGB format)
+            ////sheet.SetTabColor(new XSSFColor(new byte[] { 144, 238, 144 }, new DefaultIndexedColorMap())); // Light Green (RGB)
+
 
             // ✅ Ensure workbook is fully loaded before writing
             using (FileStream outFile = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -277,6 +280,8 @@ namespace WifiPocketProject.UI
             }
             workbook.Close(); // Close the workbook properly
             workbook = null; // Ensure it's disposed
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
             progressBar1.Invoke(new Action(() =>
             {
@@ -285,6 +290,7 @@ namespace WifiPocketProject.UI
             gdvExcel.Invoke(new Action(() =>
             {
                 MessageBox.Show("Processing Complete!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+             
                 //gdvExcel.DataSource = null;
                 //gdvExcel.Rows.Clear();
                 gdvExcel.Refresh();

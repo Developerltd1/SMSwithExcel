@@ -221,6 +221,12 @@
     <Compile Include="UI\ExportData.Designer.cs">
       <DependentUpon>ExportData.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Form2\MsgTemplete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form2\MsgTemplete.Designer.cs">
+      <DependentUpon>MsgTemplete.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ExportData.resx">
       <DependentUpon>ExportData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form2\MsgTemplete.resx">
+      <DependentUpon>MsgTemplete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

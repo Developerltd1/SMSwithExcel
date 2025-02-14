@@ -57,6 +57,7 @@ namespace WifiPocketProject.UI
             this.AboutUs.Text = "AboutUs";
             this.AboutUs.ThemeAuthor = "Narwin";
             this.AboutUs.ThemeName = "MetroLite";
+            this.AboutUs.Click += new System.EventHandler(this.AboutUs_Click);
             // 
             // AboutUsForm
             // 

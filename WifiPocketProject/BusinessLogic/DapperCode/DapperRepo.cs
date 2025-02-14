@@ -18,16 +18,18 @@ namespace BusinessLogic.DapperCode
         {
             connectionString = DatabaseConnection.GetConnectionString();
         }
-        public async Task<IEnumerable<T>> ExecuteStoredProcedureAsync<T>(string storedProcedureName, object parameters = null)
+        public IEnumerable<T> ExecuteList<T>(string storedProcedureName, object parameters = null, CommandTypeEnum commandTypeEnum = CommandTypeEnum.Text)
         {
             using (var connection = new SqlConnection(connectionString))
             {
-                await connection.OpenAsync();
+                 connection.Open();
 
-                return await connection.QueryAsync<T>(
+                return  connection.Query<T>(
                     storedProcedureName,
                     parameters,
-                    commandType: CommandType.StoredProcedure
+                    commandType: commandTypeEnum == CommandTypeEnum.StoredProcedure
+                        ? CommandType.StoredProcedure
+                        : CommandType.Text
                 );
             }
         }
